@@ -2,7 +2,7 @@ import { sessionManager } from '@/integration/session/sessionManager.ts';
 import { input, password } from '@inquirer/prompts';
 import { ui } from '@/ui/ui.ts';
 import { app } from '@/app/app.ts';
-import { logout } from '@/cli/auth/logout.ts';
+import { menu } from '@/cli/menu.ts';
 
 export async function login() {
     const username = await input({
@@ -34,9 +34,6 @@ export async function login() {
     if (result.status === 'success') {
         loader.succeed(`Signed in as ${username}`);
 
-        await ui.select('What would you like to do next?', [
-            { name: 'Logout', action: logout },
-            { name: 'Exit', action: app.exit },
-        ]);
+        await menu();
     }
 }

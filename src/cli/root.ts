@@ -2,7 +2,7 @@ import { app } from '@/app/app.ts';
 import { ui } from '@/ui/ui.ts';
 import { select } from '@/ui/select/select.ts';
 import { login } from '@/cli/auth/login.ts';
-import { logout } from '@/cli/auth/logout.ts';
+import { menu } from '@/cli/menu.ts';
 
 export async function root() {
     ui.renderLogo();
@@ -23,9 +23,6 @@ export async function root() {
     if (result.status === 'success') {
         loader.succeed(`Signed in as ${result.result.username}`);
 
-        await ui.select('What would you like to do next?', [
-            { name: 'Logout', action: logout },
-            { name: 'Exit', action: app.exit },
-        ]);
+        await menu();
     }
 }
