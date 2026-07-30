@@ -1,12 +1,17 @@
 import type { SessionManager } from '@/lib/session/SessionManager.ts';
 import type { Session } from '@/lib/zalia-giria/model/Session.ts';
 import type { LoginResponseDTO } from '@/lib/zalia-giria/dto/LoginResponseDTO.ts';
+import { ResponseParser } from '@/lib/zalia-giria/parser/ResponseParser.ts';
 
 export class ZaliaGiriaClient {
+    private readonly parser: ResponseParser;
+
     constructor(
         private readonly sessionManager: SessionManager<Session>,
         private readonly rootUrl: string,
-    ) {}
+    ) {
+        this.parser = new ResponseParser();
+    }
 
     async sendRequest(url: string, method: 'GET' | 'POST' = 'GET', body?: string): Promise<Response> {
         const headers: Record<string, string> = {};
@@ -73,6 +78,22 @@ export class ZaliaGiriaClient {
         }
 
         throw new Error('Unauthorized');
+    }
+
+    async getCart() {
+        const response = await this.sendRequest('/prekiu-krepselis');
+
+        if (!response.ok) {
+            throw new Error('Failed to retrieve the cart');
+        }
+
+        const html = await this.parseText(response);
+
+        if (html == null) {
+            throw new Error('Failed to retrieve the cart');
+        }
+
+        return this.parser.parseCart(html);
     }
 
     private async parseText(response: Response): Promise<string | null> {
