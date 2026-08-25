@@ -13,22 +13,32 @@ export async function viewCart() {
 
     loader.succeed('Cart retrieved');
 
-    printTable([
-        ...cart.items.map(item => ({
-            Name: item.name,
-            Price: item.price,
-            Quantity: item.quantity,
-            Total: item.totalPrice,
-        })),
-        { Total: cart.grandTotal },
-    ]);
+    if (cart.items.length === 0) {
+        ui.print('-----------------');
+        ui.print('The cart is empty');
+        ui.print('-----------------');
+    } else {
+        printTable([
+            ...cart.items.map(item => ({
+                Name: item.name,
+                Price: item.price,
+                Quantity: item.quantity,
+                Total: item.totalPrice,
+            })),
+            { Total: cart.grandTotal },
+        ]);
 
-    ui.print(`Delivery date: ${cart.deliveryDate}`);
+        ui.print(`Delivery date: ${cart.deliveryDate}`);
+    }
 
     await ui.select('What would you like to do next?', [
-        { name: 'Add more products', action: viewProducts },
-        { name: 'Remove products', action: () => removeProducts(cart.items) },
-        { name: 'Checkout', action: checkout },
+        { name: 'Add products', action: viewProducts },
+        ...(cart.items.length > 0
+            ? [
+                  { name: 'Remove products', action: () => removeProducts(cart.items) },
+                  { name: 'Checkout', action: checkout },
+              ]
+            : []),
         { name: 'Logout', action: logout },
         { name: 'Exit', action: app.exit },
     ]);
