@@ -34,6 +34,33 @@ export async function viewCart() {
     ]);
 }
 
-async function removeProducts(cartItem: CartItemResponseDTO[]) {
-    // TODO: implement
+async function removeProducts(cartItems: CartItemResponseDTO[]) {
+    const item = await ui.selectTable(
+        'Select the product to remove',
+        [
+            { header: 'Name', value: (item: CartItemResponseDTO) => item.name },
+            { header: 'Quantity', value: (item: CartItemResponseDTO) => item.quantity },
+            { header: 'Total', value: (item: CartItemResponseDTO) => item.totalPrice },
+        ],
+        cartItems,
+    );
+
+    await ui.select(`Remove "${item.name}" from the cart?`, [
+        { name: 'Confirm', action: () => confirmRemoveFromCart(item.id) },
+        { name: 'Cancel', action: viewCart },
+    ]);
+}
+
+async function confirmRemoveFromCart(cartProductId: string) {
+    const loader = ui.startLoader('Removing product from cart...');
+
+    const result = await app.removeFromCart(cartProductId);
+
+    if (result.status === 'success') {
+        loader.succeed('Product removed from cart');
+    } else {
+        loader.fail('Failed to remove product from cart');
+    }
+
+    await viewCart();
 }

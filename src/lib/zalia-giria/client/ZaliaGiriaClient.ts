@@ -174,6 +174,14 @@ export class ZaliaGiriaClient {
         throw new Error('Failed to checkout');
     }
 
+    async removeFromCart(cartProductId: string): Promise<void> {
+        const response = await this.sendRequest('/remove_product_project', 'POST', `cartProductId=${cartProductId}`);
+
+        if (!response.ok) {
+            throw new Error('Failed to remove product from cart');
+        }
+    }
+
     private async parseText(response: Response): Promise<string | null> {
         try {
             return await response.text();

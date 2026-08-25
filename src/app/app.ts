@@ -5,6 +5,7 @@ import { logout } from '@/app/auth/actions/logout.ts';
 import { getCart } from '@/app/cart/loaders/getCart.ts';
 import { addToCart } from '@/app/cart/actions/addToCart.ts';
 import { checkout } from '@/app/cart/actions/checkout.ts';
+import { removeFromCart } from '@/app/cart/actions/removeFromCart.ts';
 import { getProducts } from '@/app/product/loaders/getProducts.ts';
 
 export const app = {
@@ -16,4 +17,5 @@ export const app = {
     getProducts: getProducts,
     login: login,
     logout: logout,
+    removeFromCart: removeFromCart,
 };

@@ -30,6 +30,7 @@ export class ResponseParser {
                 const cells = $row.find('> td');
 
                 return {
+                    id: cells.eq(6).find('i.removeProduct').attr('data-cart-product-id')?.trim() ?? '',
                     name: cells.eq(2).find('a').text().trim(),
                     price: this.parsePrice(cells.eq(4).find('strong')),
                     quantity: cells.eq(1).find('input.count').attr('value')?.trim() ?? '',
