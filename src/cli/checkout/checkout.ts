@@ -16,10 +16,15 @@ export async function checkout() {
                 header: 'Name',
                 value: address => address.name,
             },
+            {
+                header: 'Phone',
+                value: address => address.phone,
+            },
         ],
         cart.addresses.map(address => ({
             id: address.id,
             name: `${address.name} ${address.address}`,
+            phone: address.phone,
         })),
     );
 
