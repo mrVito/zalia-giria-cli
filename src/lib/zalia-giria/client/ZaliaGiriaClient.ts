@@ -172,7 +172,9 @@ export class ZaliaGiriaClient {
             };
         }
 
-        throw new Error('Failed to checkout');
+        const body = await this.parseText(response);
+
+        throw new Error(`Failed to checkout: ${response.status} ${response.statusText}\n${body ?? ''}`);
     }
 
     async removeFromCart(cartProductId: string): Promise<void> {

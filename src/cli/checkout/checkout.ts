@@ -1,3 +1,5 @@
+import { appendFile, mkdir } from 'node:fs/promises';
+import * as path from 'node:path';
 import { app } from '@/app/app.ts';
 import { ui } from '@/ui/ui.ts';
 import { viewProducts } from '@/cli/product/viewProducts.ts';
@@ -5,6 +7,7 @@ import { logout } from '@/cli/auth/logout.ts';
 import { viewCart } from '@/cli/cart/viewCart.ts';
 import { menu } from '@/cli/menu.ts';
 import { openUrl } from '@/lib/open-url/openUrl.ts';
+import { parameters } from '@/parameters.ts';
 
 export async function checkout() {
     const cart = await getCart();
@@ -65,6 +68,10 @@ async function finishCheckout(addressId: string, paymentMethodId: string) {
     }
 
     if (result.status === 'fail') {
+        loader.fail('Checkout failed.');
+
+        await logError(result.error);
+
         await ui.select('What would you like to do next?', [
             { name: 'Try again', action: checkout },
             { name: 'View products', action: viewProducts },
@@ -72,6 +79,20 @@ async function finishCheckout(addressId: string, paymentMethodId: string) {
             { name: 'Logout', action: logout },
             { name: 'Exit', action: app.exit },
         ]);
+    }
+}
+
+async function logError(error: Error | undefined) {
+    const details = error?.stack ?? error?.message ?? 'Unknown error';
+
+    try {
+        await mkdir(parameters.sessionStorageDir, { recursive: true });
+        await appendFile(
+            path.join(parameters.sessionStorageDir, 'error.log'),
+            `[${new Date().toISOString()}] Checkout failed: ${details}\n`,
+        );
+    } catch {
+        // Logging must never break the checkout flow
     }
 }
 
