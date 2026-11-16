@@ -159,6 +159,7 @@ export class ZaliaGiriaClient {
             oldOrder: '0',
             type: paymentMethodId,
             note: '',
+            deliveryPhoneConfirmed: '1',
         };
 
         const data = new URLSearchParams(checkout);

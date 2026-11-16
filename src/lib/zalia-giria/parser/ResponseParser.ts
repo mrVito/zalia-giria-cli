@@ -46,9 +46,11 @@ export class ResponseParser {
             .map(row => {
                 const $row = $(row);
                 const cells = $row.find('> td');
+                const $radio = $row.find('input[name="rad"]');
 
                 return {
-                    id: $row.find('input[name="rad"]').attr('value')?.trim() ?? '',
+                    id: $radio.attr('value')?.trim() ?? '',
+                    phone: $radio.attr('data-phone')?.trim() ?? '',
                     name: `${cells.eq(2).text().trim()} ${cells.eq(3).text().trim()}`.trim(),
                     address: [cells.eq(4), cells.eq(5), cells.eq(6), cells.eq(7)]
                         .map(cell => cell.text().trim())
